@@ -1,7 +1,7 @@
 {
   "name": "line-bot",
   "version": "0.0.0",
-  "private": true,
+  "description": "An LINE bot express sample",
   "scripts": {
     "start": "node ./bin/www"
   },

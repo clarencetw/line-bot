@@ -10,6 +10,19 @@ LINE BOT express example
 $ npm install
 ```
 
+### Add env file
+
+``` shell
+touch .env
+```
+
+### Set file
+
+```
+CHANNEL_SECRET=YOUR_CHANNEL_SECRET
+CHANNEL_ACCESS_TOKEN=YOUR_CHANNEL_ACCESS_TOKEN
+```
+
 ### Run webhook server
 
 ``` shell
