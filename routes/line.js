@@ -32,6 +32,7 @@ function handleEvent(event) {
     // ignore non-text-message event
     return Promise.resolve(null);
   }
+  console.log(`使用者 ID: ${event.source.userId}`);
   if (event.message.text === '測試1') {
     return client.replyMessage(event.replyToken, [
       {
