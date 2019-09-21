@@ -6,6 +6,7 @@ const router = express.Router();
 const line = require('@line/bot-sdk');
 const fs = require('fs');
 const path = require('path');
+const querystring = require('querystring');
 
 const baseURL = process.env['BASE_URL'];
 const lineImgURL = 'https://d.line-scdn.net/n/line_lp/img/ogimage.png';
@@ -57,31 +58,52 @@ function handleEvent(event) {
 
     case 'follow':
       console.log(`Followed this bot: ${JSON.stringify(event)}`);
-      return client.replyMessage(event.replyToken, { type: 'text', text: 'Got followed event' });
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: 'Got followed event'
+      });
 
     case 'unfollow':
       return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
 
     case 'join':
       console.log(`Joined: ${JSON.stringify(event)}`);
-      return client.replyMessage(event.replyToken, { type: 'text', text: `Joined ${event.source.type}` });
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: `Joined ${event.source.type}`
+      });
 
     case 'leave':
       return console.log(`Left: ${JSON.stringify(event)}`);
 
     case 'memberJoined':
       console.log(`MemberJoined: ${JSON.stringify(event)}`);
-      return client.replyMessage(event.replyToken, { type: 'text', text: `MemberJoined ${event.source.type}` });
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: `MemberJoined ${event.source.type}`
+      });
 
     case 'memberLeft':
       return console.log(`MemberLeft: ${JSON.stringify(event)}`);
 
     case 'postback':
-      let data = event.postback.data;
-      return client.replyMessage(event.replyToken, { type: 'text', text: `Got postback: ${data}` });
+      let data = querystring.parse(event.postback.data);
+      if (data.action === 'url' && data.item === 'clarence') {
+        return client.replyMessage(event.replyToken, {
+          type: 'text',
+          text: 'https://ithelp.ithome.com.tw/users/20117701/ironman/2634'
+        });
+      }
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: `Got postback: ${JSON.stringify(data)}`
+      });
 
     case 'beacon':
-      return client.replyMessage(event.replyToken, { type: 'text', text: `Got beacon: ${event.beacon.hwid}` });
+      return client.replyMessage(event.replyToken, {
+        type: 'text',
+        text: `Got beacon: ${event.beacon.hwid}`
+      });
 
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
@@ -91,325 +113,375 @@ function handleEvent(event) {
 function handleText(message, replyToken, source) {
   switch (message.text) {
     case '測試1':
-        return client.replyMessage(replyToken, [
-          {
-            type: 'sticker',
-            packageId: '1',
-            stickerId: '1'
-          },
-          {
-            type: 'image',
-            originalContentUrl: 'https://developers.line.biz/media/messaging-api/messages/image-full-04fbba55.png',
-            previewImageUrl: 'https://developers.line.biz/media/messaging-api/messages/image-167efb33.png'
-          },
-          {
-            type: 'video',
-            originalContentUrl: 'https://www.sample-videos.com/video123/mp4/240/big_buck_bunny_240p_1mb.mp4',
-            previewImageUrl: 'https://www.sample-videos.com/img/Sample-jpg-image-50kb.jpg'
-          },
-          {
-            type: 'audio',
-            originalContentUrl: 'https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3',
-            duration: '27000'
-          },
-          {
-            type: 'location',
-            title: 'my location',
-            address: '〒150-0002 東京都渋谷区渋谷２丁目２１−１',
-            latitude: 35.65910807942215,
-            longitude: 139.70372892916203
-          }
-        ]);
+      return client.replyMessage(replyToken, [
+        {
+          type: 'sticker',
+          packageId: '1',
+          stickerId: '1'
+        },
+        {
+          type: 'image',
+          originalContentUrl: 'https://developers.line.biz/media/messaging-api/messages/image-full-04fbba55.png',
+          previewImageUrl: 'https://developers.line.biz/media/messaging-api/messages/image-167efb33.png'
+        },
+        {
+          type: 'video',
+          originalContentUrl: 'https://www.sample-videos.com/video123/mp4/240/big_buck_bunny_240p_1mb.mp4',
+          previewImageUrl: 'https://www.sample-videos.com/img/Sample-jpg-image-50kb.jpg'
+        },
+        {
+          type: 'audio',
+          originalContentUrl: 'https://www.sample-videos.com/audio/mp3/crowd-cheering.mp3',
+          duration: '27000'
+        },
+        {
+          type: 'location',
+          title: 'my location',
+          address: '〒150-0002 東京都渋谷区渋谷２丁目２１−１',
+          latitude: 35.65910807942215,
+          longitude: 139.70372892916203
+        }
+      ]);
 
     case '測試2':
-        return client.replyMessage(replyToken, [
-          {
-            type: 'imagemap',
-            baseUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/rich',
-            altText: 'Imagemap alt text',
-            baseSize: {
-              width: 1040,
-              height: 1040
+      return client.replyMessage(replyToken, [
+        {
+          type: 'imagemap',
+          baseUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/rich',
+          altText: 'Imagemap alt text',
+          baseSize: {
+            width: 1040,
+            height: 1040
+          },
+          actions: [
+            {
+              area: {
+                x: 0,
+                y: 0,
+                width: 520,
+                height: 520
+              },
+              type: 'uri',
+              linkUri: 'https://store.line.me/family/manga/en'
+            },
+            {
+              area: {
+                x: 520,
+                y: 0,
+                width: 520,
+                height: 520
+              },
+              type: 'uri',
+              linkUri: 'https://store.line.me/family/music/en'
+            },
+            {
+              area: {
+                x: 0,
+                y: 520,
+                width: 520,
+                height: 520
+              },
+              type: 'uri',
+              linkUri: 'https://store.line.me/family/play/en'
+            },
+            {
+              area: {
+                x: 520,
+                y: 520,
+                width: 520,
+                height: 520
+              },
+              type: 'message',
+              text: 'URANAI!'
+            },
+          ],
+          video: {
+            originalContentUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/imagemap/video.mp4',
+            previewImageUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/imagemap/preview.jpg',
+            area: {
+              x: 280,
+              y: 385,
+              width: 480,
+              height: 270,
+            },
+            externalLink: {
+              linkUri: 'https://line.me',
+              label: 'LINE'
+            }
+          },
+        },
+        {
+          type: 'template',
+          altText: 'Buttons alt text',
+          template: {
+            type: 'buttons',
+            thumbnailImageUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/buttons/1040.jpg',
+            title: 'My button sample',
+            text: 'Hello, my button',
+            actions: [
+              {
+                label: 'Go to line.me',
+                type: 'uri',
+                uri: 'https://line.me'
+              },
+              {
+                label: 'Say hello1',
+                type: 'postback',
+                data: 'hello こんにちは'
+              },
+              {
+                label: '言 hello2',
+                type: 'postback',
+                data: 'hello こんにちは',
+                text: 'hello こんにちは'
+              },
+              {
+                label: 'Say message',
+                type: 'message',
+                text: 'Rice=米'
+              },
+            ],
+          },
+        },
+        {
+          type: 'flex',
+          altText: 'this is a flex message',
+          contents: {
+            type: 'bubble',
+            body: {
+              type: 'box',
+              layout: 'vertical',
+              contents: [
+                {
+                  type: 'text',
+                  text: 'hello'
+                },
+                {
+                  type: 'text',
+                  text: 'world'
+                }
+              ]
+            }
+          }
+        }
+      ]);
+
+    case 'Buttons template':
+      return client.replyMessage(replyToken,
+        {
+          type: 'template',
+          altText: 'This is a buttons template',
+          template: {
+            type: 'buttons',
+            thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+            imageAspectRatio: 'rectangle',
+            imageSize: 'cover',
+            imageBackgroundColor: '#FFFFFF',
+            title: 'Menu',
+            text: 'Please select',
+            defaultAction: {
+              type: 'uri',
+              label: 'View detail',
+              uri: 'http://example.com/page/123',
             },
             actions: [
               {
-                area: {
-                  x: 0,
-                  y: 0,
-                  width: 520,
-                  height: 520
-                },
-                type: 'uri',
-                linkUri: 'https://store.line.me/family/manga/en'
+                type: 'postback',
+                label: 'Buy',
+                data: 'action=buy&itemid=123',
               },
               {
-                area: {
-                  x: 520,
-                  y: 0,
-                  width: 520,
-                  height: 520
-                },
-                type: 'uri',
-                linkUri: 'https://store.line.me/family/music/en'
-              },
-              {
-                area: {
-                  x: 0,
-                  y: 520,
-                  width: 520,
-                  height: 520
-                },
-                type: 'uri',
-                linkUri: 'https://store.line.me/family/play/en'
-              },
-              {
-                area: {
-                  x: 520,
-                  y: 520,
-                  width: 520,
-                  height: 520
-                },
                 type: 'message',
-                text: 'URANAI!'
+                label: 'it 邦幫忙鐵人賽',
+                text: 'it 邦幫忙鐵人賽',
               },
-            ],
-            video: {
-              originalContentUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/imagemap/video.mp4',
-              previewImageUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/imagemap/preview.jpg',
-              area: {
-                x: 280,
-                y: 385,
-                width: 480,
-                height: 270,
-              },
-              externalLink: {
-                linkUri: 'https://line.me',
-                label: 'LINE'
-              }
-            },
-          },
-          {
-            type: 'template',
-            altText: 'Buttons alt text',
-            template: {
-              type: 'buttons',
-              thumbnailImageUrl: 'https://github.com/line/line-bot-sdk-nodejs/raw/master/examples/kitchensink/static/buttons/1040.jpg',
-              title: 'My button sample',
-              text: 'Hello, my button',
-              actions: [
-                {
-                  label: 'Go to line.me',
-                  type: 'uri',
-                  uri: 'https://line.me'
-                },
-                {
-                  label: 'Say hello1',
-                  type: 'postback',
-                  data: 'hello こんにちは'
-                },
-                {
-                  label: '言 hello2',
-                  type: 'postback',
-                  data: 'hello こんにちは',
-                  text: 'hello こんにちは'
-                },
-                {
-                  label: 'Say message',
-                  type: 'message',
-                  text: 'Rice=米'
-                },
-              ],
-            },
-          },
-          {
-            type: 'flex',
-            altText: 'this is a flex message',
-            contents: {
-              type: 'bubble',
-              body: {
-                type: 'box',
-                layout: 'vertical',
-                contents: [
-                  {
-                    type: 'text',
-                    text: 'hello'
-                  },
-                  {
-                    type: 'text',
-                    text: 'world'
-                  }
-                ]
-              }
-            }
-          }
-        ]);
-
-    case 'Buttons template':
-        return client.replyMessage(replyToken,
-          {
-            type: 'template',
-            altText: 'This is a buttons template',
-            template: {
-              type: 'buttons',
-              thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-              imageAspectRatio: 'rectangle',
-              imageSize: 'cover',
-              imageBackgroundColor: '#FFFFFF',
-              title: 'Menu',
-              text: 'Please select',
-              defaultAction: {
+              {
                 type: 'uri',
                 label: 'View detail',
-                uri: 'http://example.com/page/123',
+                uri: 'https://ithelp.ithome.com.tw/2020ironman',
               },
-              actions: [
-                {
-                  type: 'postback',
-                  label: 'Buy',
-                  data: 'action=buy&itemid=123',
-                },
-                {
-                  type: 'message',
-                  label: 'it 邦幫忙鐵人賽',
-                  text: 'it 邦幫忙鐵人賽',
-                },
-                {
+            ],
+          },
+        });
+
+    case 'Confirm template':
+      return client.replyMessage(replyToken,
+        {
+          type: 'template',
+          altText: 'this is a confirm template',
+          template: {
+            type: 'confirm',
+            text: 'Are you sure?',
+            actions: [
+              {
+                type: 'message',
+                label: 'Yes',
+                text: 'yes',
+              },
+              {
+                type: 'message',
+                label: 'No',
+                text: 'no',
+              },
+            ],
+          },
+        });
+
+    case 'Carousel template':
+      return client.replyMessage(replyToken,
+        {
+          type: 'template',
+          altText: 'this is a carousel template',
+          template: {
+            type: 'carousel',
+            columns: [
+              {
+                thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                imageBackgroundColor: '#FFFFFF',
+                title: 'this is menu',
+                text: 'description',
+                defaultAction: {
                   type: 'uri',
                   label: 'View detail',
                   uri: 'https://ithelp.ithome.com.tw/2020ironman',
                 },
-              ],
-            },
-          });
-
-    case 'Confirm template':
-        return client.replyMessage(replyToken,
-          {
-            type: 'template',
-            altText: 'this is a confirm template',
-            template: {
-              type: 'confirm',
-              text: 'Are you sure?',
-              actions: [
-                {
-                  type: 'message',
-                  label: 'Yes',
-                  text: 'yes',
-                },
-                {
-                  type: 'message',
-                  label: 'No',
-                  text: 'no',
-                },
-              ],
-            },
-          });
-
-    case 'Carousel template':
-        return client.replyMessage(replyToken,
-          {
-            type: 'template',
-            altText: 'this is a carousel template',
-            template: {
-              type: 'carousel',
-              columns: [
-                {
-                  thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-                  imageBackgroundColor: '#FFFFFF',
-                  title: 'this is menu',
-                  text: 'description',
-                  defaultAction: {
-                    type: 'uri',
-                    label: 'View detail',
-                    uri: 'https://ithelp.ithome.com.tw/2020ironman',
-                  },
-                  actions: [
-                    {
-                      type: 'postback',
-                      label: 'Buy',
-                      data: 'action=buy&itemid=111',
-                    },
-                    {
-                      type: 'message',
-                      label: 'it 邦幫忙鐵人賽',
-                      text: 'it 邦幫忙鐵人賽',
-                    },
-                    {
-                      type: 'uri',
-                      label: 'View detail',
-                      uri: 'https://ithelp.ithome.com.tw/2020ironman',
-                    },
-                  ],
-                },
-                {
-                  thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-                  imageBackgroundColor: '#000000',
-                  title: 'this is menu',
-                  text: 'description',
-                  defaultAction: {
-                    type: 'uri',
-                    label: 'View detail',
-                    uri: 'https://ithelp.ithome.com.tw/2020ironman',
-                  },
-                  actions: [
-                    {
-                      type: 'postback',
-                      label: 'Buy',
-                      data: 'action=buy&itemid=222',
-                    },
-                    {
-                      type: 'message',
-                      label: 'it 邦幫忙鐵人賽',
-                      text: 'it 邦幫忙鐵人賽',
-                    },
-                    {
-                      type: 'uri',
-                      label: 'View detail',
-                      uri: 'https://ithelp.ithome.com.tw/2020ironman',
-                    },
-                  ],
-                },
-              ],
-              imageAspectRatio: 'rectangle',
-              imageSize: 'cover',
-            },
-          });
-
-    case 'Image carousel template':
-        return client.replyMessage(replyToken,
-          {
-            type: 'template',
-            altText: 'this is a image carousel template',
-            template: {
-              type: 'image_carousel',
-              columns: [
-                {
-                  imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-                  action: {
+                actions: [
+                  {
                     type: 'postback',
                     label: 'Buy',
                     data: 'action=buy&itemid=111',
                   },
-                },
-                {
-                  imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-                  action: {
+                  {
                     type: 'message',
-                    label: 'Yes',
-                    text: 'yes',
+                    label: 'it 邦幫忙鐵人賽',
+                    text: 'it 邦幫忙鐵人賽',
                   },
-                },
-                {
-                  imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
-                  action: {
+                  {
                     type: 'uri',
                     label: 'View detail',
-                    uri: 'http://example.com/page/222',
+                    uri: 'https://ithelp.ithome.com.tw/2020ironman',
                   },
+                ],
+              },
+              {
+                thumbnailImageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                imageBackgroundColor: '#000000',
+                title: 'this is menu',
+                text: 'description',
+                defaultAction: {
+                  type: 'uri',
+                  label: 'View detail',
+                  uri: 'https://ithelp.ithome.com.tw/2020ironman',
                 },
-              ],
-            },
-          });
+                actions: [
+                  {
+                    type: 'postback',
+                    label: 'Buy',
+                    data: 'action=buy&itemid=222',
+                  },
+                  {
+                    type: 'message',
+                    label: 'it 邦幫忙鐵人賽',
+                    text: 'it 邦幫忙鐵人賽',
+                  },
+                  {
+                    type: 'uri',
+                    label: 'View detail',
+                    uri: 'https://ithelp.ithome.com.tw/2020ironman',
+                  },
+                ],
+              },
+            ],
+            imageAspectRatio: 'rectangle',
+            imageSize: 'cover',
+          },
+        });
+
+    case 'Image carousel template':
+      return client.replyMessage(replyToken,
+        {
+          type: 'template',
+          altText: 'this is a image carousel template',
+          template: {
+            type: 'image_carousel',
+            columns: [
+              {
+                imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                action: {
+                  type: 'postback',
+                  label: 'Buy',
+                  data: 'action=buy&itemid=111',
+                },
+              },
+              {
+                imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                action: {
+                  type: 'message',
+                  label: 'Yes',
+                  text: 'yes',
+                },
+              },
+              {
+                imageUrl: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                action: {
+                  type: 'uri',
+                  label: 'View detail',
+                  uri: 'http://example.com/page/222',
+                },
+              },
+            ],
+          },
+        });
+
+    case 'quick reply':
+      return client.replyMessage(replyToken,
+        {
+          type: 'text',
+          text: 'Quick reply sample 😁',
+          quickReply: {
+            items: [
+              {
+                type: 'action',
+                action: {
+                  type: 'postback',
+                  label: 'ithome Clarence 鐵人賽',
+                  data: 'action=url&item=clarence',
+                  text: 'ithome Clarence 鐵人賽'
+                }
+              },
+              {
+                type: 'action',
+                action: {
+                  type: 'message',
+                  label: 'ithome Clarence',
+                  text: 'https://ithelp.ithome.com.tw/users/20117701'
+                }
+              },
+              {
+                type: 'action',
+                action: {
+                  type: 'camera',
+                  label: 'Send camera'
+                }
+              },
+              {
+                type: 'action',
+                action: {
+                  type: 'cameraRoll',
+                  label: 'Send camera roll'
+                }
+              },
+              {
+                type: 'action',
+                action: {
+                  type: 'location',
+                  label: 'Send location'
+                }
+              }
+            ]
+          },
+        }
+      );
 
     default:
       console.log(`Echo message to ${replyToken}: ${message.text}`);
@@ -423,7 +495,7 @@ function handleText(message, replyToken, source) {
 
 function handleImage(message, replyToken) {
   let getContent;
-  if (message.contentProvider.type === "line") {
+  if (message.contentProvider.type === 'line') {
     const downloadPath = path.join(process.cwd(), 'public', 'downloaded', `${message.id}.jpg`);
 
     getContent = downloadContent(message.id, downloadPath)
@@ -433,7 +505,7 @@ function handleImage(message, replyToken) {
           previewImageUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
         };
       });
-  } else if (message.contentProvider.type === "external") {
+  } else if (message.contentProvider.type === 'external') {
     getContent = Promise.resolve(message.contentProvider);
   }
 
@@ -452,7 +524,7 @@ function handleImage(message, replyToken) {
 
 function handleVideo(message, replyToken) {
   let getContent;
-  if (message.contentProvider.type === "line") {
+  if (message.contentProvider.type === 'line') {
     const downloadPath = path.join(process.cwd(), 'public', 'downloaded', `${message.id}.mp4`);
 
     getContent = downloadContent(message.id, downloadPath)
@@ -460,9 +532,9 @@ function handleVideo(message, replyToken) {
         return {
           originalContentUrl: baseURL + '/downloaded/' + path.basename(downloadPath),
           previewImageUrl: lineImgURL,
-        }
+        };
       });
-  } else if (message.contentProvider.type === "external") {
+  } else if (message.contentProvider.type === 'external') {
     getContent = Promise.resolve(message.contentProvider);
   }
 
@@ -481,7 +553,7 @@ function handleVideo(message, replyToken) {
 
 function handleAudio(message, replyToken) {
   let getContent;
-  if (message.contentProvider.type === "line") {
+  if (message.contentProvider.type === 'line') {
     const downloadPath = path.join(process.cwd(), 'public', 'downloaded', `${message.id}.m4a`);
 
     getContent = downloadContent(message.id, downloadPath)
