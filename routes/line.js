@@ -54,6 +54,35 @@ function handleEvent(event) {
         default:
           throw new Error(`Unknown message: ${JSON.stringify(message)}`);
       }
+
+    case 'follow':
+      console.log(`Followed this bot: ${JSON.stringify(event)}`);
+      return client.replyMessage(event.replyToken, { type: 'text', text: 'Got followed event' });
+
+    case 'unfollow':
+      return console.log(`Unfollowed this bot: ${JSON.stringify(event)}`);
+
+    case 'join':
+      console.log(`Joined: ${JSON.stringify(event)}`);
+      return client.replyMessage(event.replyToken, { type: 'text', text: `Joined ${event.source.type}` });
+
+    case 'leave':
+      return console.log(`Left: ${JSON.stringify(event)}`);
+
+    case 'memberJoined':
+      console.log(`MemberJoined: ${JSON.stringify(event)}`);
+      return client.replyMessage(event.replyToken, { type: 'text', text: `MemberJoined ${event.source.type}` });
+
+    case 'memberLeft':
+      return console.log(`MemberLeft: ${JSON.stringify(event)}`);
+
+    case 'postback':
+      let data = event.postback.data;
+      return client.replyMessage(event.replyToken, { type: 'text', text: `Got postback: ${data}` });
+
+    case 'beacon':
+      return client.replyMessage(event.replyToken, { type: 'text', text: `Got beacon: ${event.beacon.hwid}` });
+
     default:
       throw new Error(`Unknown event: ${JSON.stringify(event)}`);
   }
