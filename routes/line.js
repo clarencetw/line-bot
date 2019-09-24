@@ -7,6 +7,7 @@ const line = require('@line/bot-sdk');
 const fs = require('fs');
 const path = require('path');
 const querystring = require('querystring');
+const request = require('request');
 
 const baseURL = process.env['BASE_URL'];
 const lineImgURL = 'https://d.line-scdn.net/n/line_lp/img/ogimage.png';
@@ -92,6 +93,31 @@ function handleEvent(event) {
         return client.replyMessage(event.replyToken, {
           type: 'text',
           text: 'https://ithelp.ithome.com.tw/users/20117701/ironman/2634'
+        });
+      }
+      if (data.action === 'buy' && data.itemid === '123') {
+        return request.post({
+          url: `https://api.line.me/v2/bot/user/${event.source.userId}/richmenu/${process.env['RICHMENUID_CONTROLLER']}`,
+          auth: {
+            bearer: process.env['CHANNEL_ACCESS_TOKEN']
+          }
+        }, function (err, httpResponse, body) {
+          console.log(body);
+        });
+      }
+      if (data.action === 'btn' && data.message === 'a') {
+        return request.post({
+          url: 'https://api.line.me/v2/bot/richmenu/bulk/link',
+          auth: {
+            bearer: process.env['CHANNEL_ACCESS_TOKEN']
+          },
+          body: {
+            richMenuId: process.env['RICHMENUID_DEFAULT'],
+            userIds: [event.source.userId]
+          },
+          json: true
+        }, function (err, httpResponse, body) {
+          console.log(body);
         });
       }
       return client.replyMessage(event.replyToken, {
