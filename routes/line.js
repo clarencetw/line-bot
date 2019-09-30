@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const querystring = require('querystring');
 const request = require('request');
+const ithome = require('../models/ithome');
 
 const baseURL = process.env['BASE_URL'];
 const lineImgURL = 'https://d.line-scdn.net/n/line_lp/img/ogimage.png';
@@ -136,7 +137,7 @@ function handleEvent(event) {
   }
 }
 
-function handleText(message, replyToken, source) {
+async function handleText(message, replyToken, source) {
   switch (message.text) {
     case '測試1':
       return client.replyMessage(replyToken, [
@@ -510,12 +511,155 @@ function handleText(message, replyToken, source) {
       );
 
     default:
-      console.log(`Echo message to ${replyToken}: ${message.text}`);
-      const echo = {
-        type: 'text',
-        text: message.text
-      };
-      return client.replyMessage(replyToken, echo);
+      switch (true) {
+        case /^鐵人賽/.test(message.text):
+          const parseTemp = /^鐵人賽(\d\d)/.exec(message.text);
+          if (parseTemp) {
+            const res = await ithome.ithome2020api(parseTemp[1]);
+
+            return client.replyMessage(replyToken, {
+              type: 'flex',
+              altText: `鐵人賽組別：${res.teams.title}`,
+              contents: {
+                type: 'bubble',
+                header: {
+                  type: 'box',
+                  layout: 'vertical',
+                  contents: [
+                    {
+                      type: 'box',
+                      layout: 'horizontal',
+                      contents: [
+                        {
+                          type: 'image',
+                          url: 'https://ithelp.ithome.com.tw/images/ironman/11th/event/kv_event/kv-bg-addfly.png',
+                          aspectMode: 'cover',
+                          aspectRatio: '2:1',
+                          flex: 1,
+                          size: 'full'
+                        }
+                      ]
+                    }
+                  ],
+                  paddingAll: '0px'
+                },
+                body: {
+                  type: 'box',
+                  layout: 'vertical',
+                  contents: [
+                    {
+                      type: 'box',
+                      layout: 'vertical',
+                      contents: [
+                        {
+                          type: 'box',
+                          layout: 'vertical',
+                          contents: [
+                            {
+                              type: 'text',
+                              contents: [],
+                              size: 'xl',
+                              wrap: true,
+                              text: res.teams.title,
+                              color: '#ffffff',
+                              weight: 'bold'
+                            },
+                            {
+                              type: 'text',
+                              text: res.teams.desc,
+                              color: '#ffffffcc',
+                              size: 'sm',
+                              wrap: true
+                            }
+                          ],
+                          spacing: 'sm'
+                        },
+                        {
+                          type: 'text',
+                          text: `${res.teams.bar}%`,
+                          color: '#ffffffde',
+                          margin: 'lg',
+                          size: 'xs'
+                        },
+                        {
+                          type: 'box',
+                          layout: 'vertical',
+                          contents: [
+                            {
+                              type: 'box',
+                              layout: 'vertical',
+                              contents: [
+                                {
+                                  type: 'filler'
+                                }
+                              ],
+                              width: `${res.teams.bar}%`,
+                              height: '6px',
+                              backgroundColor: '#ffffff5A'
+                            }
+                          ]
+                        },
+                        {
+                          type: 'box',
+                          layout: 'vertical',
+                          contents: [
+                            {
+                              type: 'box',
+                              layout: 'vertical',
+                              contents: [
+                                {
+                                  type: 'text',
+                                  contents: [],
+                                  size: 'sm',
+                                  wrap: true,
+                                  margin: 'lg',
+                                  color: '#ffffffde',
+                                  text: `累計文章：${res.teams.cumulativeArticle}`
+                                },
+                                {
+                                  type: 'text',
+                                  contents: [],
+                                  size: 'sm',
+                                  wrap: true,
+                                  margin: 'lg',
+                                  color: '#ffffffde',
+                                  text: `團隊人數：${res.teams.numberTeams}人`
+                                },
+                                {
+                                  type: 'text',
+                                  contents: [],
+                                  size: 'sm',
+                                  wrap: true,
+                                  margin: 'lg',
+                                  color: '#ffffffde',
+                                  text: `團隊狀態：${res.teams.teamStatus}`
+                                }
+                              ]
+                            }
+                          ],
+                          paddingAll: '13px',
+                          backgroundColor: '#ffffff1A',
+                          cornerRadius: '2px',
+                          margin: 'xl'
+                        }
+                      ]
+                    }
+                  ],
+                  paddingAll: '20px',
+                  backgroundColor: '#464F69'
+                }
+              }
+            });
+          }
+
+        default:
+          console.log(`Echo message to ${replyToken}: ${message.text}`);
+          const echo = {
+            type: 'text',
+            text: message.text
+          };
+          return client.replyMessage(replyToken, echo);
+      }
   }
 }
 
