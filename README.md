@@ -158,3 +158,10 @@ Image URL: https://developers.line.biz/media/messaging-api/rich-menu/controller-
     ]
   }
 ```
+
+### Use line login
+```
+LINE_LOGIN_CHANNEL_ID=YOUR_LINE_LOGIN_CHANNEL_ID
+LINE_LOGIN_CHANNEL_SECRET=YOUR_LINE_LOGIN_CHANNEL_SECRET
+LINE_LOGIN_CALLBACK_URL=http://localhost:3000/login/line/return
+```

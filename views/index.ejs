@@ -1,0 +1,20 @@
+<html>
+
+<head>
+    <title>Express</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+
+<body>
+    <h1>Express</h1>
+    <p>Welcome to Express</p>
+    <% if(user) { %>
+    <p>Id: <%= user.id %></p>
+    <p>Display Name: <%= user.displayName %></p>
+    <img src="<%= user.pictureUrl %>" width="200">
+    <% } else { %>
+    <a href="/login/line"><img src="/images/btn_login_base.png"></a>
+    <% } %>
+</body>
+
+</html>
