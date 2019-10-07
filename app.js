@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const lineRouter = require('./routes/line');
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const linePayRouter = require('./routes/line-pay');
 const lineNotifyRouter = require('./routes/line-notify');
 
 const app = express();
@@ -43,6 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/line/pay', linePayRouter);
 app.use('/login/line_notify', lineNotifyRouter);
 app.get('/login/line', passport.authenticate('line'));
 app.get('/login/line/return',
